@@ -112,6 +112,8 @@ module Cell
             _routes.url_for(url_options.symbolize_keys)
           when Hash
             _routes.url_for(options.symbolize_keys.reverse_merge!(url_options))
+          when ActionController::Parameters
+            _routes.url_for(options.to_h.symbolize_keys.reverse_merge!(url_options))
           when String
             options
           when Array

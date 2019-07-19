@@ -16,6 +16,16 @@ class UrlCell < Cell::ViewModel
   end
 end
 
+class UrlWithParamsCell < Cell::ViewModel
+  def show
+    url_for(some_params.merge(p3: "Z"))
+  end
+
+  def some_params
+    ActionController::Parameters.new({p1: "X", p2: "Y"}).permit(:p1, :p2)
+  end
+end
+
 class UrlHelperTest < MiniTest::Spec
   include Cell::Testing
   controller MusiciansController
@@ -40,6 +50,17 @@ class UrlTest < ActionDispatch::IntegrationTest
   #   visit "/songs/1/edit"
   #   page.text.must_equal "http://www.example.com/songs/1"
   # end
+end
+
+class UrlWithParamsTest < MiniTest::Spec
+  include Cell::Testing
+
+  controller MusiciansController
+
+  let (:song_cell) { UrlWithParamsCell.new(Song.new, context: { controller: controller }) }
+
+  # path helpers work in cell instance.
+  it { song_cell.().must_equal "?p1=X&p2=Y&P3=Z" }
 end
 
 class DefaultOptionsTest < MiniTest::Spec
